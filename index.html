@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRIVIA KEANU REEVE ¿Cuánto conoces de este actor?</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      background-color: black;
+      color: #00ff00;
+      background-image: linear-gradient(to bottom, black, #001100);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      padding: 20px;
+      border: 2px solid #00ff00;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ff00;
+      background-color: rgba(0, 0, 0, 0.8);
+      text-align: center;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 2px solid #00ff00;
+      margin-bottom: 20px;
+    }
+    .question {
+      margin-bottom: 15px;
+    }
+    .options button {
+      background-color: black;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+      cursor: pointer;
+    }
+    .options button:hover {
+      background-color: #003300;
+    }
+    #qr {
+      margin-top: 20px;
+    }
+    #timer {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TRIVIA KEANU REEVE ¿Cuánto conoces de este actor?</h1>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Keanu_Reeves_2013.jpg/440px-Keanu_Reeves_2013.jpg" alt="Keanu Reeves" />
+    <div id="quiz">
+      <div id="timer"></div>
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+    </div>
+    <canvas id="qr"></canvas>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script>
+    const questions = [
+      // [Misma lista de preguntas de antes: omitido aquí por brevedad]
+    ];
+
+    let current = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 10;
+
+    function showQuestion(index) {
+      clearInterval(timer);
+      timeLeft = 10;
+      const q = questions[index];
+      document.getElementById("question").innerText = `(${index + 1}/50) ${q.q}`;
+      document.getElementById("timer").innerText = `⏳ Tiempo restante: ${timeLeft}s`;
+      const options = document.getElementById("options");
+      options.innerHTML = "";
+      q.o.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => {
+          if (i === q.a) score++;
+          nextQuestion();
+        };
+        options.appendChild(btn);
+      });
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = `⏳ Tiempo restante: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          nextQuestion();
+        }
+      }, 1000);
+    }
+
+    function nextQuestion() {
+      clearInterval(timer);
+      current++;
+      if (current < questions.length) {
+        showQuestion(current);
+      } else {
+        document.getElementById("quiz").innerHTML = `<h2>¡Trivia completada!</h2><p>Tu puntuación: ${score} de ${questions.length}</p>`;
+      }
+    }
+
+    showQuestion(current);
+
+    const qr = new QRious({
+      element: document.getElementById("qr"),
+      value: window.location.href,
+      size: 150,
+      background: 'black',
+      foreground: '#00ff00'
+    });
+  </script>
+</body>
+</html>
